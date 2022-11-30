@@ -34,7 +34,16 @@ tokens_url = [
 ]
 
 
+client_url = [
+    path('client/', views.ClientCreateList.as_view({'get': 'list', 'post': 'create'})),
+    path('client/<int:pk>', views.ClientCreateList.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'})),
+    # path('client/addimage', views.AddProfileImage.as_view({'get': 'list', 'post': 'create'})),
+    # path('client/addimage/<int:pk>', views.AddProfileImage.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'}))
+]
+
+
 urlpatterns = [
     path('', include(tokens_url)),
-    path('test12/', views.index)
+    path('test12/', views.index),
+    path('', include(client_url)),
 ]

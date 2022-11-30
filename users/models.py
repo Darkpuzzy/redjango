@@ -6,8 +6,9 @@ class ClientProfile(models.Model):
     second_name = models.CharField(max_length=150, verbose_name='Second name')
     birthday = models.DateField(verbose_name='Birthday')
     gender = models.CharField(max_length=30, verbose_name='Gender')
-    photo = models.ForeignKey('PhotoClient', null=True, verbose_name='Photo', on_delete=models.PROTECT)
+    photo = models.ForeignKey('PhotoClient', null=True, verbose_name='Photo', on_delete=models.PROTECT,)
 
 
 class PhotoClient(models.Model):
-    photo = models.ImageField(upload_to='images', verbose_name='Photo', blank=True)
+    # client = models.ForeignKey(ClientProfile, null=False, verbose_name='Client', on_delete=models.PROTECT)
+    photo = models.ImageField(upload_to='images', verbose_name='Photo', blank=True, null=True)

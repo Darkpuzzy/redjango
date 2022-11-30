@@ -1,105 +1,127 @@
 from datetime import datetime
 from rest_framework import serializers
 from .models import *
+from django.shortcuts import get_object_or_404
+from rest_framework.pagination import PageNumberPagination
 
 
-class CarSerializers(serializers.ModelSerializer):
+# Pagination classes
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 1000
+
+
+# CRUD for Client and Photo
+class ClientSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Car
-        fields = ('name',)
+        model = ClientProfile
+        fields = ('id', 'first_name', 'second_name', 'birthday', 'gender', 'photo')
+#
+#
+# class ClientSerializerS(serializers.ModelSerializer):
+#
+#     class Meta:
+#         model = ClientProfile
+#         fields = ('first_name', 'second_name', 'birthday', 'gender', 'photo')
 
 
-class CarsModelSerializers(serializers.ModelSerializer):
-    car = CarSerializers()
+# class PhotoProfileSerializerCreate(serializers.ModelSerializer):
+#     client = ClientSerializerS()
+#
+#     class Meta:
+#         model = PhotoClient
+#         fields = ('client', 'photo', )
+#
+#     def create(self, validated_data):
+#         client = ClientProfile.objects.create(first_name=validated_data.get('client').get('first_name', ''),
+#                                               second_name=validated_data.get('client').get('second_name', ''),
+#                                               birthday=validated_data.get('client').get('birthday', ''),
+#                                               gender=validated_data.get('client').get('gender', '').lower(),)
+#         photo = PhotoClient.objects.create(photo=validated_data.get('photo'),
+#                                            client_id=client.id)
+#         return photo
+#
+#     def update(self, instance, validated_data):
+#         print(instance.client.first_name)
+#         try:
+#             # instance.client.first_name = validated_data.get('client').get('first_name', instance.client.first_name)
+#             # instance.client.second_name = validated_data.get('client').get('second_name', instance.client.second_name)
+#             # instance.client.birthday = validated_data.get('client').get('birthday', instance.client.birthday)
+#             # instance.client.gender = validated_data.get('client').get('gender', instance.client.gender)
+#             instance.photo = validated_data.get('photo',)
+#             # instance.client.save()
+#             instance.save()
+#             return instance
+#         except Exception as e:
+#             return e
+
+
+class PhotoProfileSerializerCreated(serializers.ModelSerializer):
 
     class Meta:
-        model = CarsModel
-        fields = ('model', 'car')
+        model = PhotoClient
+        fields = ('photo',)
+
+
+class ClientCreate(serializers.ModelSerializer):
+    photo = PhotoProfileSerializerCreated()
+
+    class Meta:
+        model = ClientProfile
+        fields = ('id', 'first_name', 'second_name', 'birthday', 'gender', 'photo')
 
     def validate(self, attrs):
-        model = attrs.get('model')
-        car_id = Car.objects.get(name=attrs.get('car').get('name'))
-        bool = CarsModel.objects.filter(model=model, car_id=car_id.id).exists()
-        if bool:
+        gender_list = ['men', 'female']
+        model = attrs.get('gender').lower()
+        bool = model in gender_list
+        if bool is False:
             raise serializers.ValidationError(
-                {"This model already exists"})
+                {"Entered men of female"})
         return attrs
 
     def create(self, validated_data):
-        obj, created = Car.objects.get_or_create(name=validated_data.get('car').get('name'))
-        cmod = CarsModel.objects.create(model=validated_data.get('model', ''),
-                                        car_id=obj.id)
-        return cmod
+        print(validated_data)
+        boolean = validated_data.get('photo').get('photo', '') is None
+        if boolean:
+            client = ClientProfile.objects.create(first_name=validated_data.get('first_name', ''),
+                                                  second_name=validated_data.get('second_name', ''),
+                                                  birthday=validated_data.get('birthday', ''),
+                                                  gender=validated_data.get('gender', '').lower(),
+                                                  photo_id=1)
+
+            return client
+        created_photo = PhotoClient.objects.create(photo=validated_data.get('photo').get('photo', ''))
+        client = ClientProfile.objects.create(first_name=validated_data.get('first_name', ''),
+                                              second_name=validated_data.get('second_name', ''),
+                                              birthday=validated_data.get('birthday', ''),
+                                              gender=validated_data.get('gender', '').lower(),
+                                              photo_id=created_photo.id)
+
+        return client
 
     def update(self, instance, validated_data):
-        car_id = Car.objects.get(name=validated_data.get('car').get('name'))
-        instance.model = validated_data.get('model', instance.model)
-        instance.car_id = car_id.id
-        instance.save()
-
-        return instance
-
-
-class ColourSerializers(serializers.ModelSerializer):
-    class Meta:
-        model = Colour
-        fields = ('colour',)
-
-    def validate(self, attrs):
-        colour = attrs.get('colour')
-        bool = Colour.objects.filter(colour=colour).exists()
-        if bool:
-            raise serializers.ValidationError(
-                {"This colour already exists"})
-        return attrs
-
-
-class OrderSerializersGet(serializers.ModelSerializer):
-    model = CarsModelSerializers()
-    colour = ColourSerializers()
-
-    class Meta:
-        model = Order
-        fields = ('model', 'colour', 'quantity', 'date_order')
-        read_only_fields = ('id', 'date_order')
-
-
-class OrderSerializers(serializers.ModelSerializer):
-
-    class Meta:
-        model = Order
-        fields = ('model', 'colour', 'quantity', 'date_order')
-        read_only_fields = ('id', 'date_order')
-
-
-class ColourQuantitySerializers(serializers.ModelSerializer):
-    colour = ColourSerializers()
-
-    class Meta:
-        model = Order
-        fields = ('colour', 'quantity')
-
-# #TODO on method GET/POST v2
-# class OrdersSerializer(serializers.ModelSerializer):
-#
-#     class Meta:
-#         model = Order
-#         fields = ('model', 'colour', 'quantity', 'date_order')
-#         read_only_fields = ('id', 'date_order')
-#
-#     def create(self, validated_data):
-#         order = Order.objects.create(
-#                                    model_id=validated_data.get('model', 0),
-#                                    colour_id=validated_data.get('colour', 0),
-#                                    quantity=validated_data.get('quantity', 0))
-#
-#         return order
-#
-#     def update(self, instance, validated_data):
-#         instance.model_id = validated_data.get('model', instance.model)
-#         instance.colour_id = validated_data.get('colour', instance.colour)
-#         instance.quantity = validated_data.get('quantity', instance.quantity)
-#         instance.save()
-#
-#         return instance
+        boolean = validated_data.get('photo').get('photo', '') is None
+        if boolean:
+            try:
+                instance.first_name = validated_data.get('first_name', instance.first_name)
+                instance.second_name = validated_data.get('second_name', instance.second_name)
+                instance.birthday = validated_data.get('birthday', instance.birthday)
+                instance.gender = validated_data.get('gender', instance.gender).lower()
+                instance.save()
+                return instance
+            except Exception as e:
+                return e
+        else:
+            try:
+                instance.first_name = validated_data.get('first_name', instance.first_name)
+                instance.second_name = validated_data.get('second_name', instance.second_name)
+                instance.birthday = validated_data.get('birthday', instance.birthday)
+                instance.gender = validated_data.get('gender', instance.gender).lower()
+                instance.photo.photo = validated_data.get('photo').get('photo', instance.photo.photo)
+                instance.photo.save()
+                instance.save()
+                return instance
+            except Exception as e:
+                return e
