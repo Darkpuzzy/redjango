@@ -26,6 +26,7 @@ class MyTokenObtainPairView(TokenObtainPairView):
 
 
 #CRUD for client
+# @permission_classes((IsAuthenticated,))
 class ClientCreateList(viewsets.ModelViewSet):
     queryset = ClientProfile.objects.all()
     serializer_class = ClientSerializer
@@ -33,8 +34,9 @@ class ClientCreateList(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['birthday', 'gender']
 
-    def get_serializer_class(self): # Отвечает за вид отображения API
-        methods = ['POST', 'PUT'] # При данных методах, форма отправки данных или редактирования имеет вид {'mode': int, 'colour': int, 'quantity': int}
+    # Переопределяем класс serializer для методов POST,PUT
+    def get_serializer_class(self):
+        methods = ['POST', 'PUT']
         if self.request.method in methods:
             return ClientCreate
         return self.serializer_class
