@@ -1,3 +1,5 @@
+# Alternative cut ( In progress )
+
 from PIL import Image
 
 
