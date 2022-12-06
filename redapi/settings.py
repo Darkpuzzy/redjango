@@ -126,9 +126,18 @@ WSGI_APPLICATION = 'redapi.wsgi.application'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    #     'NAME': 'redapp',
+    #     'USER': 'postgres',
+    #     'PASSWORD': 'vxdf44qwer',
+    #     'HOST': 'db',
+    #     'PORT': '5432',
+    # }
+
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db1.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
@@ -176,6 +185,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
+# Cutting image file
 DJANGORESIZED_DEFAULT_SIZE = [1024, 768]
 DJANGORESIZED_DEFAULT_SCALE = 0.5
 DJANGORESIZED_DEFAULT_QUALITY = 75

@@ -27,7 +27,7 @@ class MyTokenObtainPairView(TokenObtainPairView):
 
 
 # CRUD for client
-# @permission_classes((IsAuthenticated,))
+@permission_classes((IsAuthenticated,))
 class ClientCreateList(viewsets.ModelViewSet):
     queryset = ClientProfile.objects.all()
     serializer_class = ClientSerializer
@@ -43,6 +43,8 @@ class ClientCreateList(viewsets.ModelViewSet):
         return self.serializer_class
 
 
+# Weather API openweathermap.com
+@permission_classes((IsAuthenticated,))
 class Weatherget(viewsets.ViewSet):
     serializer_class = WeatherSerializer
 

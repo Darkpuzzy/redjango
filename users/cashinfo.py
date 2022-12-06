@@ -62,6 +62,6 @@ def check_ram():
 
         logger.info("Check system")
         logger.info(json_response)
-        time.sleep(30)
+        time.sleep(300)
 
 
