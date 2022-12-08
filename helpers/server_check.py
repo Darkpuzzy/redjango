@@ -8,14 +8,14 @@ import socket
 
 from loguru import logger
 
+# Constant
 LOG_LEVEL = logging.getLevelName(os.environ.get("LOG_LEVEL", "DEBUG"))
 JSON_LOGS = True if os.environ.get("JSON_LOGS", "0") == "1" else False
+HOST = 'localhost'  # Symbolic name meaning all available interfaces
+PORT = 50007  # Arbitrary non-privileged port
 
 
 def check_ram_tcp():
-
-    HOST = 'localhost'  # Symbolic name meaning all available interfaces
-    PORT = 50007  # Arbitrary non-privileged port
     flag = True
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind((HOST, PORT))
