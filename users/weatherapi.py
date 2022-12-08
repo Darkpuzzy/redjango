@@ -22,7 +22,7 @@ class WeatherApi:
             }
             return response
         except Exception as e:
-            return {'Error': e}
+            return {'Error': str(e)}
 
     @classmethod
     def weather_at_five_day(cls, city):
@@ -40,7 +40,7 @@ class WeatherApi:
                 list_response.append(response)
             return list_response
         except Exception as e:
-            return {'Error': e}
+            return {'Error': str(e)}
 
     @classmethod
     def weather_at_date(cls, city, date):
@@ -53,5 +53,5 @@ class WeatherApi:
             }
             return response
         except Exception as e:
-            return {'Error': f"{e}"}
+            return {'Error': str(e)}
 

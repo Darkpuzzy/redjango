@@ -18,6 +18,8 @@ services:
       - 8080:8080
     command: bash -c "
         python manage.py migrate &&
+        export DJANGO_SUPERUSER_PASSWORD='zzzxxc23!' &&
+        python manage.py createsuperuser --username niko99 --email ex@ex.com --noinput &&
         python manage.py runserver 0.0.0.0:8080"
     depends_on:
       - db

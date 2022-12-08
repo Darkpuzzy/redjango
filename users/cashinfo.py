@@ -3,6 +3,8 @@ import os
 import sys
 import psutil
 import datetime, time
+import json
+import socket
 
 from loguru import logger
 
@@ -62,6 +64,5 @@ def check_ram():
 
         logger.info("Check system")
         logger.info(json_response)
-        time.sleep(300)
-
+        time.sleep(60)
 

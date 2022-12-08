@@ -9,6 +9,8 @@ from rest_framework.pagination import PageNumberPagination
 from .cutphoto import crop_center
 from .weatherapi import WeatherApi
 
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 # Pagination classes
 class StandardResultsSetPagination(PageNumberPagination):
@@ -104,16 +106,17 @@ class ClientCreate(serializers.ModelSerializer):
 
 class WeatherSerializer(serializers.Serializer):
 
-    date = serializers.DateField()
+    date = serializers.DateField(required=False)
     city = serializers.CharField(max_length=256)
 
     def validate(self, attrs):
         boolean = attrs.get('city').isdigit()
         if boolean:
-            return boolean
+            raise serializers.ValidationError(
+                {"Entered city"})
         return attrs
 
-    def create(self, validated_data):
+    def create_weather_to_json(self, validated_data):
         try:
             if validated_data.get('date') is None:
                 weather = WeatherApi.weather_today(city=validated_data.get('city'))
@@ -127,5 +130,15 @@ class WeatherSerializer(serializers.Serializer):
             }
             return response
         except Exception as e:
-            return {'Error': 'Have a problem'}
+            return {'Error': str(e)}
 
+
+# Custom token
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        token['shifr'] = 'РукаРукуМоет'
+
+        return token

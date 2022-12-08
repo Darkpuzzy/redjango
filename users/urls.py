@@ -44,7 +44,8 @@ client_url = [
 
 test_url = [
     path('test/', views.index),
-    path('test/weather', views.Weatherget.as_view({'get': 'list'}))
+    path('test/weather', views.Weatherget.as_view({'get': 'retrieve'})),
+    path('test/info', views.monitoring)
 ]
 
 urlpatterns = [
