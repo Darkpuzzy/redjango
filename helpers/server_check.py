@@ -50,7 +50,7 @@ def check_ram_tcp():
                 }
                 system_to_string = json.dumps(system_info)
                 conn.sendall(system_to_string.encode())
-                time.sleep(10)
+                time.sleep(0.2)
                 break
             if data == b'stop':
                 logger.info('Stopped')
